@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const dsn = "host=abul.db.elephantsql.com user=idjbfebr password=ONurXwA2nXGWBnhcMmYNiGk75zMBawJa port=5432 database=idjbfebr"
+const dsn = os.Getenv("ELEPHANT")
 
 type DB struct {
 	*gorm.DB
