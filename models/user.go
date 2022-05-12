@@ -1,23 +1,33 @@
 package models
 
-import "strconv"
+import (
+	"github.com/google/uuid"
+)
 
 type User struct {
-	name    string
-	surname string
-	number  int
+	//gorm.Model
+	Id       uuid.UUID
+	Name     string
+	Surname  string
+	Email    string
+	Password string
 }
 
-func NewUser(name, surname string, number int) *User {
+func NewUser(name, surname, email, password string) *User {
 	return &User{
-		name:    name,
-		surname: surname,
-		number:  number,
+		Id:       uuid.New(),
+		Name:     name,
+		Surname:  surname,
+		Email:    email,
+		Password: password,
 	}
 }
 
+func (u *User) GetID() uuid.UUID {
+	return u.Id
+}
+
 func (u *User) ToString() string {
-	return "name: " + u.name +
-		"\nsurname: " + u.surname +
-		"\nnumber: " + strconv.Itoa(u.number)
+	return "name: " + u.Name +
+		"\nsurname: " + u.Surname
 }

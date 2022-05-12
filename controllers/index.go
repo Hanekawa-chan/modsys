@@ -1,29 +1,26 @@
 package controllers
 
 import (
-	"awesomeProject/models"
-	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
+	"awesomeProject/services"
+	"html/template"
 	"net/http"
-	"strconv"
 )
 
-func IndexGet(c *gin.Context) {
-	c.HTML(http.StatusOK,
-		// Use the index.html template
-		"index.html",
-		// Pass the data that the page uses (in this case, 'title')
-		nil)
+type IndexHandler struct {
+	*services.Handler
 }
 
-func IndexPost(c *gin.Context) {
-	name := c.PostForm("name")
-	surname := c.PostForm("surname")
-	number, err := strconv.Atoi(c.PostForm("number"))
+func (i *IndexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	i.indexGet(w, r)
+}
+
+func (i *IndexHandler) indexGet(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("view/templates/index.html"))
+	id, err := i.GetAuthenticatedUserID(r)
+	user, err := i.GetUserByID(id)
+	data := map[string]string{"name": user.Name}
+	err = tmpl.Execute(w, data)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Couldn't convert number to int")
+		return
 	}
-	user := models.NewUser(name, surname, number)
-	log.Info().Msg(user.ToString())
-	c.Redirect(http.StatusOK, "localhost:8080/test")
 }

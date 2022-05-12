@@ -2,27 +2,51 @@ package main
 
 import (
 	"awesomeProject/controllers"
-	"context"
-	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v4"
+	"awesomeProject/dao"
+	"awesomeProject/services"
+	"flag"
 	"github.com/rs/zerolog/log"
+	"net/http"
+	"time"
 )
 
 func main() {
-	conn, err := pgx.Connect(context.Background(),
-		"postgres://idjbfebr:ONurXwA2nXGWBnhcMmYNiGk75zMBawJa@abul.db.elephantsql.com:5432/idjbfebr")
+	//services.GenerateKeys()
+	//certFile := flag.String("certfile", "cert.pem", "certificate PEM file")
+	//keyFile := flag.String("keyfile", "key.pem", "key PEM file")
+	flag.Parse()
+
+	db, err := dao.New()
 	if err != nil {
-		log.Fatal().Err(err).Msg("Unable to connect to database")
+		panic(err)
 	}
-	defer conn.Close(context.Background())
 
-	r := gin.Default()
+	handler := services.NewHandler(db)
+	authHandler := controllers.AuthHandler{Handler: handler}
+	indexHandler := controllers.IndexHandler{Handler: handler}
 
-	r.LoadHTMLGlob("view/templates/*")
-	controllers.InitializeControllers(r)
+	handler.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./view/static/"))))
+	handler.Use(authHandler.AuthMiddleware)
+
+	handler.Handle("/", &indexHandler)
+	handler.Handle("/login", &authHandler)
+	handler.Handle("/signup", &authHandler)
+	handler.Handle("/logout", &authHandler)
+	handler.HandleFunc("/error", controllers.ErrorHandler)
+
+	srv := &http.Server{
+		Handler:      handler,
+		Addr:         "127.0.0.1:8080",
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+		//TLSConfig: &tls.Config{
+		//	MinVersion: tls.VersionTLS13,
+		//},
+	}
 
 	log.Info().Msg("running server")
-	err = r.Run()
+	//err = srv.ListenAndServeTLS(*certFile, *keyFile)
+	err = srv.ListenAndServe()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Unable to run server")
 	}
