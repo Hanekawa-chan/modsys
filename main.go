@@ -23,15 +23,23 @@ func main() {
 
 	handler := services.NewHandler(db)
 	authHandler := controllers.AuthHandler{Handler: handler}
+	adminHandler := controllers.AdminHandler{Handler: handler}
 	indexHandler := controllers.IndexHandler{Handler: handler}
+	testHandler := controllers.TestHandler{Handler: handler}
 
 	handler.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./view/static/"))))
 	handler.Use(authHandler.AuthMiddleware)
 
 	handler.Handle("/", &indexHandler)
+
+	handler.Handle("/set", &adminHandler)
 	handler.Handle("/login", &authHandler)
 	handler.Handle("/signup", &authHandler)
 	handler.Handle("/logout", &authHandler)
+
+	handler.Handle("/test/create", &testHandler)
+	handler.Handle("/test/get", &testHandler)
+
 	handler.HandleFunc("/error", controllers.ErrorHandler)
 
 	srv := &http.Server{

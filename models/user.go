@@ -11,6 +11,7 @@ type User struct {
 	Surname  string
 	Email    string
 	Password string
+	Role     int16
 }
 
 func NewUser(name, surname, email, password string) *User {
@@ -20,6 +21,7 @@ func NewUser(name, surname, email, password string) *User {
 		Surname:  surname,
 		Email:    email,
 		Password: password,
+		Role:     0,
 	}
 }
 

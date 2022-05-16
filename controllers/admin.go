@@ -4,6 +4,7 @@ import (
 	"awesomeProject/models"
 	"awesomeProject/services"
 	"github.com/gorilla/schema"
+	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -14,27 +15,39 @@ type AdminHandler struct {
 func (a *AdminHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/set":
-		a.setRole(w, r)
+		switch r.Method {
+		case "GET":
+			a.setGet(w, r)
+		case "POST":
+			a.setPost(w, r)
+		}
+
 	}
 }
 
-func (a *AdminHandler) setRole(w http.ResponseWriter, r *http.Request) {
+func (a *AdminHandler) setGet(w http.ResponseWriter, r *http.Request) {
+	returnTemplate(w, r, "admin")
+}
+
+func (a *AdminHandler) setPost(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		returnError(w, r, err)
+		log.Info().Err(err)
+		ReturnError(w, r, err)
 		return
 	}
 	var userRole models.UserRole
 	decoder := schema.NewDecoder()
 	err = decoder.Decode(&userRole, r.PostForm)
 	if err != nil {
-		returnError(w, r, err)
+		log.Info().Err(err)
+		ReturnError(w, r, err)
 		return
 	}
 
 	err = a.SetRole(userRole.Email, userRole.Role)
 	if err != nil {
-		returnError(w, r, err)
-		return
+		ReturnError(w, r, err)
 	}
+	http.Redirect(w, r, "http://localhost:8080", http.StatusFound)
 }

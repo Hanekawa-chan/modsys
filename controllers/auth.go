@@ -5,7 +5,6 @@ import (
 	"awesomeProject/services"
 	"github.com/gorilla/schema"
 	"github.com/rs/zerolog/log"
-	"html/template"
 	"net/http"
 	"time"
 )
@@ -37,34 +36,30 @@ func (a *AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AuthHandler) loginGet(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("view/templates/login.html"))
-	err := tmpl.Execute(w, nil)
-	if err != nil {
-		returnError(w, r, err)
-	}
+	returnTemplate(w, r, "login")
 }
 
 func (a *AuthHandler) loginPost(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		returnError(w, r, err)
+		ReturnError(w, r, err)
 		return
 	}
 	var credentials models.LoginCredentials
 	decoder := schema.NewDecoder()
 	err = decoder.Decode(&credentials, r.PostForm)
 	if err != nil {
-		returnError(w, r, err)
+		ReturnError(w, r, err)
 		return
 	}
 	user, err := a.GetUserByCredentials(credentials)
 	if err != nil {
-		returnError(w, r, err)
+		ReturnError(w, r, err)
 		return
 	}
 	token, err := a.GenerateUserIDJwt(user.GetID())
 	if err != nil {
-		returnError(w, r, err)
+		ReturnError(w, r, err)
 		return
 	}
 
@@ -78,36 +73,38 @@ func (a *AuthHandler) loginPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AuthHandler) signupGet(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("view/templates/signup.html"))
-	err := tmpl.Execute(w, nil)
-	if err != nil {
-		returnError(w, r, err)
-	}
+	returnTemplate(w, r, "signup")
 }
 
 func (a *AuthHandler) signupPost(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		returnError(w, r, err)
+		ReturnError(w, r, err)
 	}
-	var user models.User
+	user := &models.User{}
 	decoder := schema.NewDecoder()
-	err = decoder.Decode(&user, r.PostForm)
+	err = decoder.Decode(user, r.PostForm)
 	if err != nil {
-		returnError(w, r, err)
+		ReturnError(w, r, err)
 		return
 	}
 	log.Info().Msg(user.ToString())
 
-	err = a.SaveUser(&user)
+	err = a.SaveUser(user)
 	if err != nil {
-		returnError(w, r, err)
+		ReturnError(w, r, err)
+		return
+	}
+
+	user, err = a.GetUserByEmail(user.Email)
+	if err != nil {
+		ReturnError(w, r, err)
 		return
 	}
 
 	token, err := a.GenerateUserIDJwt(user.GetID())
 	if err != nil {
-		returnError(w, r, err)
+		ReturnError(w, r, err)
 		return
 	}
 
@@ -125,7 +122,7 @@ func (a *AuthHandler) signupPost(w http.ResponseWriter, r *http.Request) {
 func (a *AuthHandler) logout(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("jwt")
 	if err != nil {
-		returnError(w, r, err)
+		ReturnError(w, r, err)
 		return
 	}
 	cookie.Expires = time.Now()
