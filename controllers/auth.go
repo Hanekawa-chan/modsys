@@ -108,8 +108,6 @@ func (a *AuthHandler) signupPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Info().Msg(token)
-
 	cookie := new(http.Cookie)
 	cookie.Name = "jwt"
 	cookie.Value = token

@@ -8,8 +8,9 @@ import (
 
 type Handler struct {
 	*mux.Router
-	db        *dao.DB
-	generator *Generator
+	db         *dao.DB
+	generator  *Generator
+	roleRoutes map[int16][]string
 }
 
 func NewHandler(db *dao.DB) *Handler {
