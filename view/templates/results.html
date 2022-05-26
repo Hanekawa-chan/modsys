@@ -1,0 +1,9 @@
+{{define "content"}}
+    {{range .results}}
+        <p>Название теста: {{.Name}}</p>
+        <p>Автор: {{.Author}}</p>
+        <p>Баллы: {{.Score}}</p>
+        <a href="http://localhost:8080/result/get?id={{.Id}}">Перейти к детальным результатам</a>
+        <hr>
+    {{end}}
+{{end}}

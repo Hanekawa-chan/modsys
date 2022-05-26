@@ -13,7 +13,6 @@ type User struct {
 	Password string
 	Role     int16
 	Tests    []Test   `gorm:"foreignKey:TeacherId"`
-	Answers  []Answer `gorm:"foreignKey:StudentId"`
 	Results  []Result `gorm:"foreignKey:StudentId"`
 }
 

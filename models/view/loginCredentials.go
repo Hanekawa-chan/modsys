@@ -1,4 +1,4 @@
-package models
+package view
 
 type LoginCredentials struct {
 	Email    string

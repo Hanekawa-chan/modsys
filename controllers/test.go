@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"awesomeProject/models"
+	"awesomeProject/models/view"
 	"awesomeProject/services"
 	"fmt"
 	"github.com/google/uuid"
@@ -83,7 +84,7 @@ func (t *TestHandler) testGet(w http.ResponseWriter, r *http.Request) {
 	} else {
 		if q == "all" {
 			tests := t.GetTests()
-			testsAuthors := make([]models.TestAuthor, len(tests))
+			testsAuthors := make([]view.TestAuthor, len(tests))
 			for i, test := range tests {
 				testsAuthors[i].Id = test.Id.String()
 				testsAuthors[i].Name = test.Name
@@ -146,7 +147,7 @@ func (t *TestHandler) testPost(w http.ResponseWriter, r *http.Request) {
 	for i := range r.PostForm["answer"] { // range over []string
 		answer := models.Answer{
 			QuestionId: test.Questions[i].Id,
-			StudentId:  userId,
+			ResultId:   result.Id,
 			Answer:     r.PostForm["answer"][i],
 			Question:   test.Questions[i],
 		}

@@ -1,9 +1,11 @@
 {{define "content"}}
-    {{range .results}}
-        <p>Название теста: {{.Name}}</p>
-        <p>Автор: {{.Author}}</p>
-        <p>Баллы: {{.Score}}</p>
-        <a href="http://localhost:8080/result/get?id={{.Id}}">Перейти к детальным результатам</a>
+    <p>Название теста: {{.result.Name}}</p>
+    <p>Автор: {{.result.Author}}</p>
+    <p>Баллы: {{.result.Score}}</p>
+    {{range .result.Answers}}
+        <p>Вопрос: {{.Question.Question}}</p>
+        <p>Правильный ответ: {{.Question.Answer}}</p>
+        <p>Ответ ученика: {{.Answer}}</p>
         <hr>
     {{end}}
 {{end}}

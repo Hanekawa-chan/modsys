@@ -2,13 +2,14 @@ package services
 
 import (
 	"awesomeProject/models"
+	"awesomeProject/models/view"
 	"errors"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
 
-func (h *Handler) GetUserByCredentials(credentials models.LoginCredentials) (*models.User, error) {
+func (h *Handler) GetUserByCredentials(credentials view.LoginCredentials) (*models.User, error) {
 	var user *models.User
 	var err error
 	user, err = h.db.GetUserByEmail(credentials.Email)

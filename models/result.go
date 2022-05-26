@@ -9,4 +9,5 @@ type Result struct {
 	StudentId uuid.UUID `gorm:"type:uuid"`
 	Student   User      `gorm:"ForeignKey:StudentId;References:Id"`
 	Test      Test      `gorm:"ForeignKey:TestId;References:Id"`
+	Answers   []Answer  `gorm:"foreignKey:ResultId"`
 }

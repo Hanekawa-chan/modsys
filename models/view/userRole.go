@@ -1,4 +1,4 @@
-package models
+package view
 
 type UserRole struct {
 	Email string

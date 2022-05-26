@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"awesomeProject/models"
+	"awesomeProject/models/view"
 	"awesomeProject/services"
 	"github.com/gorilla/schema"
 	"github.com/rs/zerolog/log"
@@ -37,7 +37,7 @@ func (a *AdminHandler) setPost(w http.ResponseWriter, r *http.Request) {
 		ReturnError(w, r, err)
 		return
 	}
-	var userRole models.UserRole
+	var userRole view.UserRole
 	decoder := schema.NewDecoder()
 	err = decoder.Decode(&userRole, r.PostForm)
 	if err != nil {
