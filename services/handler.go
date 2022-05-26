@@ -13,10 +13,11 @@ type Handler struct {
 	roleRoutes map[int16][]string
 }
 
-func NewHandler(db *dao.DB) *Handler {
+func NewHandler(db *dao.DB, roleRoutes map[int16][]string) *Handler {
 	return &Handler{
-		db:        db,
-		generator: New(os.Getenv("JWT_SECRET")),
-		Router:    mux.NewRouter(),
+		db:         db,
+		generator:  New(os.Getenv("JWT_SECRET")),
+		Router:     mux.NewRouter(),
+		roleRoutes: roleRoutes,
 	}
 }

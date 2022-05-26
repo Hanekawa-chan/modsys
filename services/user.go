@@ -4,7 +4,6 @@ import (
 	"awesomeProject/models"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
@@ -13,7 +12,7 @@ func (h *Handler) GetUserByCredentials(credentials models.LoginCredentials) (*mo
 	var user *models.User
 	var err error
 	user, err = h.db.GetUserByEmail(credentials.Email)
-	if !CheckPasswordHash(credentials.Password, user.Password) {
+	if user == nil || !CheckPasswordHash(credentials.Password, user.Password) {
 		return nil, errors.New("invalid password")
 	}
 	if err != nil {
@@ -66,7 +65,6 @@ func (h *Handler) GetAuthenticatedUserID(r *http.Request) (uuid.UUID, error) {
 	if err != nil {
 		return uuid.UUID{}, err
 	}
-	log.Info().Msg("token= " + token.Value)
 
 	id, err := h.GetUserID(token.Value)
 	if err != nil {

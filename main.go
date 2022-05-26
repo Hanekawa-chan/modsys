@@ -17,28 +17,33 @@ func main() {
 
 	db, err := dao.New()
 	if err != nil {
-		panic(err)
+		log.Fatal().Err(err).Msg("Unable to connect db")
 	}
-
-	handler := services.NewHandler(db)
-	authHandler := controllers.AuthHandler{Handler: handler}
-	adminHandler := controllers.AdminHandler{Handler: handler}
-	indexHandler := controllers.IndexHandler{Handler: handler}
-	testHandler := controllers.TestHandler{Handler: handler}
-
-	handler.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./view/static/"))))
-
-	handler.Use(authHandler.AuthMiddleware)
-	handler.Use(authHandler.RoleMiddleware)
+	//err = db.Migrate()
+	//if err != nil {
+	//	log.Fatal().Err(err).Msg("Unable to run server")
+	//}
 
 	roleRoutes := make(map[int16][]string)
 	defaultRoutes := []string{"/", "/login", "/signup", "/logout", "/static", "/error"}
 
 	roleRoutes[services.Student] = append(defaultRoutes, []string{"/test/get", "/result/get"}...)
 
-	roleRoutes[services.Teacher] = append(defaultRoutes, []string{"/test/create", "/test/update"}...)
+	roleRoutes[services.Teacher] = append(defaultRoutes, []string{"/test/create", "/test/update", "/test/get"}...)
 
 	roleRoutes[services.Admin] = append(defaultRoutes, []string{"/set"}...)
+
+	handler := services.NewHandler(db, roleRoutes)
+	authHandler := controllers.AuthHandler{Handler: handler}
+	adminHandler := controllers.AdminHandler{Handler: handler}
+	indexHandler := controllers.IndexHandler{Handler: handler}
+	testHandler := controllers.TestHandler{Handler: handler}
+	resultHandler := controllers.ResultHandler{Handler: handler}
+
+	handler.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./view/static/"))))
+
+	handler.Use(authHandler.AuthMiddleware)
+	handler.Use(authHandler.RoleMiddleware)
 
 	handler.Handle("/", &indexHandler)
 
@@ -48,7 +53,13 @@ func main() {
 	handler.Handle("/signup", &authHandler)
 	handler.Handle("/logout", &authHandler)
 
-	handler.Handle("/test/*", &testHandler)
+	testRouter := handler.PathPrefix("/test").Subrouter()
+	testRouter.Handle("/get", &testHandler)
+	testRouter.Handle("/create", &testHandler)
+	testRouter.Handle("/update", &testHandler)
+
+	resultRouter := handler.PathPrefix("/result").Subrouter()
+	resultRouter.Handle("/get", &resultHandler)
 
 	handler.HandleFunc("/error", controllers.ErrorHandler)
 

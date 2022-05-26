@@ -1,10 +1,14 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Тест</title>
-</head>
-<body>
-тут будет тест с названием {{.name}}
-</body>
-</html>
+{{define "content"}}
+<form method="POST">
+    <p>{{.test.Name}}</p>
+    {{range .test.Questions}}
+        <p>Вопрос:{{.Question}}</p>
+        <label>Ответ:
+            <input type="text" name="answer">
+        </label>
+        <p>Баллы:{{.Score}}</p>
+        <hr>
+    {{end}}
+    <input type="submit">
+</form>
+{{end}}

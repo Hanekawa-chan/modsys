@@ -1,0 +1,8 @@
+{{define "content"}}
+{{range .tests}}
+<p>Название теста: {{.Name}}</p>
+<p>Автор: {{.Author}}</p>
+<a href="http://localhost:8080/test/get?id={{.Id}}">Перейти к тесту</a>
+<hr>
+{{end}}
+{{end}}

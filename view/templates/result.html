@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Тест</title>
-</head>
-<body>
-тут будет результат
-</body>
-</html>
+{{define "content"}}
+    {{range .results}}
+        <p>Название теста: {{.Name}}</p>
+        <p>Автор: {{.Author}}</p>
+        <p>Баллы: {{.Score}}</p>
+        <a href="http://localhost:8080/result/get?id={{.Id}}">Перейти к детальным результатам</a>
+        <hr>
+    {{end}}
+{{end}}

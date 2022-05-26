@@ -5,9 +5,15 @@ import (
 	"github.com/google/uuid"
 )
 
+func (d *DB) GetTests() []models.Test {
+	var tests []models.Test
+	d.First(&tests)
+	return tests
+}
+
 func (d *DB) GetTestByID(id uuid.UUID) (*models.Test, error) {
 	var test models.Test
-	tx := d.First(&test, "id = ?", id)
+	tx := d.Preload("Questions").First(&test, id)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -15,6 +21,6 @@ func (d *DB) GetTestByID(id uuid.UUID) (*models.Test, error) {
 }
 
 func (d *DB) SaveTest(test *models.Test) error {
-	tx := d.Create(test)
-	return tx.Error
+	err := d.Create(test).Error
+	return err
 }

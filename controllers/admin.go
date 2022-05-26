@@ -26,7 +26,8 @@ func (a *AdminHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AdminHandler) setGet(w http.ResponseWriter, r *http.Request) {
-	returnTemplate(w, r, "admin")
+	data := map[string]string{"title": "Страница админа"}
+	returnTemplateWithData(w, r, "admin", data)
 }
 
 func (a *AdminHandler) setPost(w http.ResponseWriter, r *http.Request) {

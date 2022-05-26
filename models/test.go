@@ -3,10 +3,12 @@ package models
 import "github.com/google/uuid"
 
 type Test struct {
-	Id        uuid.UUID
-	TeacherId uuid.UUID
+	Id        uuid.UUID `gorm:"primaryKey;type:uuid"`
+	TeacherId uuid.UUID `gorm:"type:uuid"`
 	Name      string
-	Questions []Question
+	Questions []Question `gorm:"foreignKey:TestId"`
+	Results   []Result   `gorm:"foreignKey:TestId"`
+	Teacher   User       `gorm:"ForeignKey:TeacherId;References:Id"`
 }
 
 func NewTest(teacherId uuid.UUID, name string) *Test {

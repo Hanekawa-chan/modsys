@@ -6,12 +6,15 @@ import (
 
 type User struct {
 	//gorm.Model
-	Id       uuid.UUID
+	Id       uuid.UUID `gorm:"primaryKey;type:uuid"`
 	Name     string
 	Surname  string
 	Email    string
 	Password string
 	Role     int16
+	Tests    []Test   `gorm:"foreignKey:TeacherId"`
+	Answers  []Answer `gorm:"foreignKey:StudentId"`
+	Results  []Result `gorm:"foreignKey:StudentId"`
 }
 
 func NewUser(name, surname, email, password string) *User {

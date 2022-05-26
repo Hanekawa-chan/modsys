@@ -36,7 +36,8 @@ func (a *AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AuthHandler) loginGet(w http.ResponseWriter, r *http.Request) {
-	returnTemplate(w, r, "login")
+	data := map[string]string{"title": "Вход"}
+	returnTemplateWithData(w, r, "login", data)
 }
 
 func (a *AuthHandler) loginPost(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +74,8 @@ func (a *AuthHandler) loginPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AuthHandler) signupGet(w http.ResponseWriter, r *http.Request) {
-	returnTemplate(w, r, "signup")
+	data := map[string]string{"title": "Регистрация"}
+	returnTemplateWithData(w, r, "signup", data)
 }
 
 func (a *AuthHandler) signupPost(w http.ResponseWriter, r *http.Request) {

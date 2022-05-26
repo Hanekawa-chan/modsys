@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"awesomeProject/services"
-	"html/template"
 	"net/http"
+	"strconv"
 )
 
 type IndexHandler struct {
@@ -11,11 +11,18 @@ type IndexHandler struct {
 }
 
 func (i *IndexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	i.indexGet(w, r)
+	switch r.URL.Path {
+	case "/":
+		switch r.Method {
+		case "GET":
+			i.indexGet(w, r)
+		case "POST":
+			i.indexPost(w, r)
+		}
+	}
 }
 
 func (i *IndexHandler) indexGet(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("view/templates/index.html"))
 	id, err := i.GetAuthenticatedUserID(r)
 	if err != nil {
 		ReturnError(w, r, err)
@@ -26,10 +33,19 @@ func (i *IndexHandler) indexGet(w http.ResponseWriter, r *http.Request) {
 		ReturnError(w, r, err)
 		return
 	}
-	data := map[string]string{"name": user.Name}
-	err = tmpl.Execute(w, data)
+
+	data := map[string]string{"name": user.Name, "title": "Главная страница", "role": strconv.Itoa(int(user.Role))}
+
+	returnTemplateWithData(w, r, "index", data)
+}
+
+func (i *IndexHandler) indexPost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
 	if err != nil {
 		ReturnError(w, r, err)
 		return
 	}
+
+	id := r.PostForm.Get("id")
+	http.Redirect(w, r, "http://localhost:8080/test/get?id="+id, http.StatusFound)
 }
