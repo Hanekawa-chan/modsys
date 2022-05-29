@@ -27,9 +27,11 @@ func main() {
 	roleRoutes := make(map[int16][]string)
 	defaultRoutes := []string{"/", "/login", "/signup", "/logout", "/static", "/error"}
 
-	roleRoutes[services.Student] = append(defaultRoutes, []string{"/test/get", "/result/get"}...)
+	roleRoutes[services.Student] = append(defaultRoutes, []string{"/test/get", "/result/get", "/teacher/add",
+		"/teacher/list", "/teacher/get", "/teacher/delete"}...)
 
-	roleRoutes[services.Teacher] = append(defaultRoutes, []string{"/test/create", "/test/update", "/test/delete", "/test/get", "/result/get"}...)
+	roleRoutes[services.Teacher] = append(defaultRoutes, []string{"/test/create", "/test/update", "/test/delete",
+		"/test/get", "/result/get"}...)
 
 	roleRoutes[services.Admin] = append(defaultRoutes, []string{"/set", "/list", "/record"}...)
 
@@ -55,6 +57,12 @@ func main() {
 	handler.Handle("/login", &authHandler)
 	handler.Handle("/signup", &authHandler)
 	handler.Handle("/logout", &authHandler)
+
+	teacherRouter := handler.PathPrefix("/teacher").Subrouter()
+	teacherRouter.Handle("/add", &testHandler)
+	teacherRouter.Handle("/list", &testHandler)
+	teacherRouter.Handle("/get", &testHandler)
+	teacherRouter.Handle("/delete", &testHandler)
 
 	testRouter := handler.PathPrefix("/test").Subrouter()
 	testRouter.Handle("/get", &testHandler)

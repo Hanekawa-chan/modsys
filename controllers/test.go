@@ -44,6 +44,14 @@ func (t *TestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	case "/test/delete":
 		t.testDeleteGet(w, r)
+	case "/teacher/list":
+		t.teacherList(w, r)
+	case "/teacher/add":
+		t.teacherAdd(w, r)
+	case "/teacher/delete":
+		t.teacherDelete(w, r)
+	case "/teacher/get":
+		t.teacherGet(w, r)
 	}
 }
 
@@ -225,16 +233,16 @@ func (t *TestHandler) testUpdatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *TestHandler) testDeleteGet(w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query().Get("id")
-	testId, err := uuid.Parse(q)
-	if err != nil {
-		ReturnError(w, r, err)
-		return
-	}
-	err = t.DeleteTestById(testId)
-	if err != nil {
-		ReturnError(w, r, err)
-		return
-	}
+	//q := r.URL.Query().Get("id")
+	//testId, err := uuid.Parse(q)
+	//if err != nil {
+	//	ReturnError(w, r, err)
+	//	return
+	//}
+	//err = t.DeleteTestById(testId)
+	//if err != nil {
+	//	ReturnError(w, r, err)
+	//	return
+	//}
 	http.Redirect(w, r, "http://localhost:8080/test/get?id=my", http.StatusFound)
 }

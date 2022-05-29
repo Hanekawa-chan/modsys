@@ -15,11 +15,6 @@ func (h *Handler) GetTestsByTeacherId(id uuid.UUID) []models.Test {
 	return tests
 }
 
-func (h *Handler) DeleteTestById(id uuid.UUID) error {
-	err := h.db.DeleteTestById(id)
-	return err
-}
-
 func (h *Handler) GetTestById(id uuid.UUID) (*models.Test, error) {
 	var test *models.Test
 	var err error

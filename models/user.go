@@ -24,6 +24,6 @@ func NewUser(name, surname, email, password string) *User {
 		Surname:  surname,
 		Email:    email,
 		Password: password,
-		RoleId:   0,
+		RoleId:   3,
 	}
 }

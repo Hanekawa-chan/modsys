@@ -1,0 +1,46 @@
+{{define "content"}}
+<form method="POST" id="form">
+  <label id="name">Название:<br />
+    <input type="text" name="name">
+  </label><br />
+  <br/>
+  <button onClick="add_input()" type="button">
+    добавить вопрос
+  </button>
+  <br/>
+  <br/>
+  <input type="submit">
+</form>
+<script>
+  function insertAfter(referenceNode, newNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+  }
+  const add = document.getElementById("name");
+  function add_input() {
+    var question = document.createElement("input");
+    question.setAttribute("type", "text");
+    question.setAttribute("name", "question");
+    question.setAttribute("placeholder", "Текст вопроса");
+
+    var answer = document.createElement("input");
+    answer.setAttribute("type", "text");
+    answer.setAttribute("name", "answer");
+    answer.setAttribute("placeholder", "Ответ");
+
+    var score = document.createElement("input");
+    score.setAttribute("type", "number");
+    score.setAttribute("name", "score");
+    score.setAttribute("placeholder", "1");
+
+    insertAfter(add, score)
+    insertAfter(add, answer)
+    insertAfter(add, question)
+    insertAfter(add, document.createElement("br"))
+    insertAfter(add, document.createElement("br"))
+  }
+</script>
+{{end}}
+
+{{define "css"}}
+<!--<link href="../static/css/signin.css" rel="stylesheet" type="text/css">-->
+{{end}}

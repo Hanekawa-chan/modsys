@@ -26,12 +26,6 @@ func (d *DB) GetTestById(id uuid.UUID) (*models.Test, error) {
 	return &test, nil
 }
 
-func (d *DB) DeleteTestById(id uuid.UUID) error {
-	var test models.Test
-	tx := d.Delete(&test, id)
-	return tx.Error
-}
-
 func (d *DB) SaveTest(test *models.Test) error {
 	err := d.Create(test).Error
 	return err

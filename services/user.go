@@ -13,6 +13,14 @@ func (h *Handler) GetUsers() []models.User {
 	return h.db.GetUsers()
 }
 
+func (h *Handler) GetTeachers() []models.User {
+	return h.db.GetTeachers()
+}
+
+func (h *Handler) GetTeachersByStudentId(studentId uuid.UUID) ([]models.User, error) {
+	return h.db.GetTeachersByStudentId(studentId)
+}
+
 func (h *Handler) GetUserByCredentials(credentials view.LoginCredentials) (*models.User, error) {
 	var user *models.User
 	var err error
@@ -93,6 +101,16 @@ func (h *Handler) GetRole(r *http.Request) string {
 	}
 	role := user.Role.Role
 	return role
+}
+
+func (h *Handler) AddTeacher(studentId, teacherId uuid.UUID) error {
+	err := h.db.AddTeacher(studentId, teacherId)
+	return err
+}
+
+func (h *Handler) DeleteTeacher(studentId, teacherId uuid.UUID) error {
+	err := h.db.DeleteTeacher(studentId, teacherId)
+	return err
 }
 
 func HashPassword(password string) (string, error) {
