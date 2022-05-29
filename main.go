@@ -19,19 +19,19 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Unable to connect db")
 	}
-	//err = db.Migrate()
-	//if err != nil {
-	//	log.Fatal().Err(err).Msg("Unable to run server")
-	//}
+	err = db.Migrate()
+	if err != nil {
+		log.Fatal().Err(err).Msg("Unable to run migrations")
+	}
 
 	roleRoutes := make(map[int16][]string)
 	defaultRoutes := []string{"/", "/login", "/signup", "/logout", "/static", "/error"}
 
 	roleRoutes[services.Student] = append(defaultRoutes, []string{"/test/get", "/result/get"}...)
 
-	roleRoutes[services.Teacher] = append(defaultRoutes, []string{"/test/create", "/test/update", "/test/get"}...)
+	roleRoutes[services.Teacher] = append(defaultRoutes, []string{"/test/create", "/test/update", "/test/delete", "/test/get", "/result/get"}...)
 
-	roleRoutes[services.Admin] = append(defaultRoutes, []string{"/set"}...)
+	roleRoutes[services.Admin] = append(defaultRoutes, []string{"/set", "/list", "/record"}...)
 
 	handler := services.NewHandler(db, roleRoutes)
 	authHandler := controllers.AuthHandler{Handler: handler}
@@ -40,7 +40,8 @@ func main() {
 	testHandler := controllers.TestHandler{Handler: handler}
 	resultHandler := controllers.ResultHandler{Handler: handler}
 
-	handler.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./view/static/"))))
+	fileServer := http.FileServer(http.Dir("./view/static"))
+	handler.PathPrefix("/static").Handler(http.StripPrefix("/static", fileServer))
 
 	handler.Use(authHandler.AuthMiddleware)
 	handler.Use(authHandler.RoleMiddleware)
@@ -48,6 +49,8 @@ func main() {
 	handler.Handle("/", &indexHandler)
 
 	handler.Handle("/set", &adminHandler)
+	handler.Handle("/list", &adminHandler)
+	handler.Handle("/record", &adminHandler)
 
 	handler.Handle("/login", &authHandler)
 	handler.Handle("/signup", &authHandler)
@@ -57,6 +60,7 @@ func main() {
 	testRouter.Handle("/get", &testHandler)
 	testRouter.Handle("/create", &testHandler)
 	testRouter.Handle("/update", &testHandler)
+	testRouter.Handle("/delete", &testHandler)
 
 	resultRouter := handler.PathPrefix("/result").Subrouter()
 	resultRouter.Handle("/get", &resultHandler)

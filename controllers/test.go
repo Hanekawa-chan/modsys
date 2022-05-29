@@ -11,8 +11,12 @@ import (
 	"strconv"
 )
 
+type Test struct {
+}
+
 type TestHandler struct {
 	*services.Handler
+	tests map[uuid.UUID]Test
 }
 
 func (t *TestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -27,9 +31,9 @@ func (t *TestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "/test/update":
 		switch r.Method {
 		case "GET":
-			t.testCreateGet(w, r)
+			t.testUpdateGet(w, r)
 		case "POST":
-			t.testCreatePost(w, r)
+			t.testUpdatePost(w, r)
 		}
 	case "/test/get":
 		switch r.Method {
@@ -38,11 +42,13 @@ func (t *TestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		case "POST":
 			t.testPost(w, r)
 		}
+	case "/test/delete":
+		t.testDeleteGet(w, r)
 	}
 }
 
 func (t *TestHandler) testCreateGet(w http.ResponseWriter, r *http.Request) {
-	data := map[string]string{"title": "Создание теста"}
+	data := map[string]interface{}{"title": "Создание теста", "auth": true, "role": t.GetRole(r)}
 	returnTemplateWithData(w, r, "test_create", data)
 }
 
@@ -79,8 +85,13 @@ func (t *TestHandler) testGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user, err := t.GetUserByID(userId)
-	if user.Role == services.Teacher {
-
+	if user.Role.Id == services.Teacher {
+		if q == "my" {
+			tests := t.GetTestsByTeacherId(userId)
+			data := map[string]interface{}{"title": "Тесты", "auth": true, "tests": tests, "role": t.GetRole(r)}
+			returnTemplateWithData(w, r, "tests", data)
+			return
+		}
 	} else {
 		if q == "all" {
 			tests := t.GetTests()
@@ -95,7 +106,7 @@ func (t *TestHandler) testGet(w http.ResponseWriter, r *http.Request) {
 				}
 				testsAuthors[i].Author = teacher.Name + " " + teacher.Surname
 			}
-			data := map[string]interface{}{"title": "Тесты", "tests": testsAuthors}
+			data := map[string]interface{}{"title": "Тесты", "auth": true, "tests": testsAuthors, "role": t.GetRole(r)}
 			returnTemplateWithData(w, r, "tests", data)
 			return
 		}
@@ -105,13 +116,13 @@ func (t *TestHandler) testGet(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		test, err := t.GetTestByID(id)
+		test, err := t.GetTestById(id)
 		if err != nil {
 			ReturnError(w, r, err)
 			return
 		}
 		fmt.Println(test)
-		data := map[string]interface{}{"test": test, "title": "Тест"}
+		data := map[string]interface{}{"test": test, "auth": true, "title": "Тест", "role": t.GetRole(r)}
 		returnTemplateWithData(w, r, "test", data)
 	}
 }
@@ -123,7 +134,7 @@ func (t *TestHandler) testPost(w http.ResponseWriter, r *http.Request) {
 		ReturnError(w, r, err)
 		return
 	}
-	test, err := t.GetTestByID(testId)
+	test, err := t.GetTestById(testId)
 	if err != nil {
 		ReturnError(w, r, err)
 		return
@@ -169,4 +180,61 @@ func (t *TestHandler) testPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Redirect(w, r, "http://localhost:8080", http.StatusFound)
+}
+
+func (t *TestHandler) testUpdateGet(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query().Get("id")
+	testId, err := uuid.Parse(q)
+	if err != nil {
+		ReturnError(w, r, err)
+		return
+	}
+	test, err := t.GetTestById(testId)
+	if err != nil {
+		ReturnError(w, r, err)
+		return
+	}
+	data := map[string]interface{}{"title": "Редактирование теста", "auth": true,
+		"role": t.GetRole(r), "test": test}
+	returnTemplateWithData(w, r, "test_create", data)
+}
+
+func (t *TestHandler) testUpdatePost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		ReturnError(w, r, err)
+		return
+	}
+	teacherId, err := t.GetAuthenticatedUserID(r)
+	if err != nil {
+		ReturnError(w, r, err)
+		return
+	}
+	test := models.NewTest(teacherId, r.PostFormValue("name"))
+	questions := make([]models.Question, len(r.PostForm["question"]))
+	for i := range r.PostForm["question"] { // range over []string
+		score, _ := strconv.Atoi(r.PostForm["score"][i])
+		questions[i] = *models.NewQuestion(test.Id, r.PostForm["question"][i], r.PostForm["answer"][i], score)
+	}
+	test.Questions = questions
+	err = t.SaveTest(test)
+	if err != nil {
+		ReturnError(w, r, err)
+	}
+	http.Redirect(w, r, "http://localhost:8080", http.StatusFound)
+}
+
+func (t *TestHandler) testDeleteGet(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query().Get("id")
+	testId, err := uuid.Parse(q)
+	if err != nil {
+		ReturnError(w, r, err)
+		return
+	}
+	err = t.DeleteTestById(testId)
+	if err != nil {
+		ReturnError(w, r, err)
+		return
+	}
+	http.Redirect(w, r, "http://localhost:8080/test/get?id=my", http.StatusFound)
 }

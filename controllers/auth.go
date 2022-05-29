@@ -5,7 +5,6 @@ import (
 	"awesomeProject/models/view"
 	"awesomeProject/services"
 	"github.com/gorilla/schema"
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"time"
 )
@@ -37,7 +36,7 @@ func (a *AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AuthHandler) loginGet(w http.ResponseWriter, r *http.Request) {
-	data := map[string]string{"title": "Вход"}
+	data := map[string]interface{}{"title": "Вход", "auth": false, "role": a.GetRole(r)}
 	returnTemplateWithData(w, r, "login", data)
 }
 
@@ -59,7 +58,7 @@ func (a *AuthHandler) loginPost(w http.ResponseWriter, r *http.Request) {
 		ReturnError(w, r, err)
 		return
 	}
-	token, err := a.GenerateUserIDJwt(user.GetID())
+	token, err := a.GenerateUserIDJwt(user.Id)
 	if err != nil {
 		ReturnError(w, r, err)
 		return
@@ -75,7 +74,7 @@ func (a *AuthHandler) loginPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AuthHandler) signupGet(w http.ResponseWriter, r *http.Request) {
-	data := map[string]string{"title": "Регистрация"}
+	data := map[string]interface{}{"title": "Регистрация", "auth": false, "role": a.GetRole(r)}
 	returnTemplateWithData(w, r, "signup", data)
 }
 
@@ -91,7 +90,6 @@ func (a *AuthHandler) signupPost(w http.ResponseWriter, r *http.Request) {
 		ReturnError(w, r, err)
 		return
 	}
-	log.Info().Msg(user.ToString())
 
 	err = a.SaveUser(user)
 	if err != nil {
@@ -105,7 +103,7 @@ func (a *AuthHandler) signupPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := a.GenerateUserIDJwt(user.GetID())
+	token, err := a.GenerateUserIDJwt(user.Id)
 	if err != nil {
 		ReturnError(w, r, err)
 		return

@@ -1,16 +1,12 @@
 package services
 
-import (
-	"github.com/rs/zerolog/log"
-	"strconv"
-)
-
-func (h *Handler) SetRole(email string, role int16) error {
-	log.Info().Msg(email + " " + strconv.Itoa(int(role)))
+func (h *Handler) SetRole(email string, roleId int16) error {
 	user, err := h.GetUserByEmail(email)
 	if err != nil {
 		return err
 	}
-	err = h.db.SetRole(user, role)
+	user.RoleId = roleId
+	user.Role = *h.db.GetRoleById(roleId)
+	err = h.db.SetRole(user)
 	return err
 }

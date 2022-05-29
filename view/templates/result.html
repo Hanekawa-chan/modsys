@@ -1,4 +1,5 @@
 {{define "content"}}
+<main class="list-typeless w-100 m-auto">
     <p>Название теста: {{.result.Name}}</p>
     <p>Автор: {{.result.Author}}</p>
     <p>Баллы: {{.result.Score}}</p>
@@ -8,4 +9,9 @@
         <p>Ответ ученика: {{.Answer}}</p>
         <hr>
     {{end}}
+</main>
+{{end}}
+
+{{define "css"}}
+<link href="../static/css/list-typeless.css" rel="stylesheet" type="text/css">
 {{end}}

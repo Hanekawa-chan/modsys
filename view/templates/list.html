@@ -1,0 +1,47 @@
+{{define "content"}}
+    <h2>Список пользователей</h2>
+    {{range $index, $el := .users}}
+        <p>Email: {{$el.Email}}</p>
+        <p>Имя: {{.Name}}</p>
+        <p>Фамилия: {{$el.Surname}}</p>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{$index}}" data-bs-toggle="dropdown" aria-expanded="false">
+                {{if eq $el.Role.Role "teacher"}}
+                    Преподаватель
+                {{else if eq $el.Role.Role "student"}}
+                    Студент
+                {{else if eq $el.Role.Role "admin"}}
+                    Админ
+                {{end}}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li>
+                    <button class="dropdown-item" id="dropdownItem3" type="button" onclick="setRole({{$el.Id}}, 3, {{$index}})">Студент</button>
+                </li>
+                <li>
+                    <button class="dropdown-item" id="dropdownItem1" type="button" onclick="setRole({{$el.Id}}, 1, {{$index}})">Преподаватель</button>
+                </li>
+                <li>
+                    <button class="dropdown-item" id="dropdownItem2" type="button" onclick="setRole({{$el.Id}}, 2, {{$index}})">Админ</button>
+                </li>
+            </ul>
+        </div>
+        <hr>
+    {{end}}
+<script>
+    function setRole(id, role, index) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("dropdownMenuButton"+index).innerHTML = document.getElementById("dropdownItem"+role).innerHTML;
+            }
+        };
+        xhttp.open("GET", "/set?role="+role+"&id="+id, true);
+        xhttp.send();
+    }
+</script>
+{{end}}
+
+{{define "css"}}
+<!--<link href="../static/css/signin.css" rel="stylesheet" type="text/css">-->
+{{end}}

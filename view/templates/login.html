@@ -1,13 +1,22 @@
 {{define "content"}}
-<h2>Вход</h2>
-<form method="POST">
-    <label>Email:<br />
-        <input type="email" name="email">
-    </label><br />
-    <label>Пароль:<br />
-        <input type="password" name="password">
-    </label><br />
-    <input type="submit">
-</form>
-<a href="http://localhost:8080/signup">Регистрация</a>
+<main class="form-signin w-100 m-auto">
+    <h2 class="h2 mb-3 fw-normal">Вход</h2>
+    <form method="POST">
+        <div class="form-floating">
+            <input class="form-control" type="email" name="email" id="email">
+            <label for="email">Email</label>
+        </div>
+        <div class="form-floating">
+            <input class="form-control" type="password" name="password" id="password">
+            <label for="password">Пароль</label>
+        </div>
+        <input class="w-100 btn btn-lg btn-primary" type="submit">
+    </form>
+    <a class="mb-3 fw-normal" href="http://localhost:8080/signup">Регистрация</a>
+</main>
 {{end}}
+
+{{define "css"}}
+<link href="../static/css/signin.css" rel="stylesheet" type="text/css">
+{{end}}
+

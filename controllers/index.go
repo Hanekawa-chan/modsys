@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"awesomeProject/services"
+	"github.com/rs/zerolog/log"
 	"net/http"
-	"strconv"
 )
 
 type IndexHandler struct {
@@ -33,8 +33,15 @@ func (i *IndexHandler) indexGet(w http.ResponseWriter, r *http.Request) {
 		ReturnError(w, r, err)
 		return
 	}
+	auth := false
+	if user != nil {
+		auth = true
+	}
 
-	data := map[string]string{"name": user.Name, "title": "Главная страница", "role": strconv.Itoa(int(user.Role))}
+	log.Info().Msg(i.GetRole(r))
+
+	data := map[string]interface{}{"auth": auth,
+		"title": "Главная страница", "role": i.GetRole(r), "news": i.GetRecords()}
 
 	returnTemplateWithData(w, r, "index", data)
 }

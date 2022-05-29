@@ -1,39 +1,15 @@
 {{define "content"}}
-    Привет, <p>{{.name}}</p>
-    <a href="http://localhost:8080/logout">Выйти из аккаунта</a>
-    {{if eq .role "0"}}
-        {{template "student"}}
-    {{else if eq .role "1"}}
-        {{template "teacher"}}
-    {{else if eq .role "2"}}
-        {{template "admin"}}
-    {{end}}
+<main class="list-typeless w-100 m-auto">
+        <h2>Новости сайта</h2>
+        {{range .news}}
+            <p>Номер: {{.Id}}</p>
+            <p>Дата и время: {{.Date}}</p>
+            <p>{{.Text}}</p>
+            <hr>
+        {{end}}
+</main>
 {{end}}
 
-{{define "admin"}}
-<br/>
-<br/>
-<a href=http://localhost:8080/set>Назначить роль</a>
-{{end}}
-
-{{define "teacher"}}
-<br/>
-<br/>
-<a href=http://localhost:8080/test/create>Создать тест</a>
-{{end}}
-
-{{define "student"}}
-<br/>
-<br/>
-<form method="POST">
-    <label>ID теста:<br />
-        <input type="text" name="id">
-    </label><br />
-    <input type="submit">
-</form>
-<br/>
-<br/>
-<a href="http://localhost:8080/test/get?id=all">Тесты</a>
-<br/>
-<a href="http://localhost:8080/result/get?id=all">Результаты</a>
+{{define "css"}}
+<link href="../static/css/list-typeless.css" rel="stylesheet" type="text/css">
 {{end}}

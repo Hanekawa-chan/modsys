@@ -5,15 +5,16 @@ import (
 )
 
 type User struct {
-	//gorm.Model
 	Id       uuid.UUID `gorm:"primaryKey;type:uuid"`
 	Name     string
 	Surname  string
 	Email    string
 	Password string
-	Role     int16
+	RoleId   int16
+	Role     Role     `gorm:"ForeignKey:RoleId;References:Id"`
 	Tests    []Test   `gorm:"foreignKey:TeacherId"`
 	Results  []Result `gorm:"foreignKey:StudentId"`
+	Teachers []User   `gorm:"many2many:students_teachers"`
 }
 
 func NewUser(name, surname, email, password string) *User {
@@ -23,15 +24,6 @@ func NewUser(name, surname, email, password string) *User {
 		Surname:  surname,
 		Email:    email,
 		Password: password,
-		Role:     0,
+		RoleId:   0,
 	}
-}
-
-func (u *User) GetID() uuid.UUID {
-	return u.Id
-}
-
-func (u *User) ToString() string {
-	return "name: " + u.Name +
-		"\nsurname: " + u.Surname
 }

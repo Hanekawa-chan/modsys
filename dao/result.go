@@ -7,7 +7,7 @@ import (
 
 func (d *DB) GetResults(userId uuid.UUID) []models.Result {
 	var results []models.Result
-	d.First(&results, "student_id = ?", userId)
+	d.Find(&results, "student_id = ?", userId)
 	return results
 }
 

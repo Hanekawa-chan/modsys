@@ -1,0 +1,16 @@
+{{define "content"}}
+<main class="form-record w-100 m-auto">
+    <h2 class="h2 mb-3 fw-normal">Статья</h2>
+    <form method="POST">
+        <div class="input-group">
+            <span class="input-group-text">Содержание:</span>
+            <textarea class="form-control" aria-label="With textarea" name="text"></textarea>
+        </div>
+        <input class="btn btn-primary" type="submit">
+    </form>
+</main>
+{{end}}
+
+{{define "css"}}
+<link href="../static/css/record.css" rel="stylesheet" type="text/css">
+{{end}}

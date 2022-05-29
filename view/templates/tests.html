@@ -1,8 +1,30 @@
 {{define "content"}}
-{{range .tests}}
-<p>Название теста: {{.Name}}</p>
-<p>Автор: {{.Author}}</p>
-<a href="http://localhost:8080/test/get?id={{.Id}}">Перейти к тесту</a>
-<hr>
+<main class="list-typeless w-100 m-auto">
+    {{if eq .role "teacher"}}
+        <button type="button" class="btn btn-primary" onclick="location.href='/test/create'">
+            Создание теста
+        </button>
+    {{end}}
+    {{$var := .role}}
+    {{range .tests}}
+        {{if eq $var "student"}}
+            <p>Название теста: {{.Name}}</p>
+            <p>Автор: {{.Author}}</p>
+            <a href="/test/get?id={{.Id}}">Перейти к тесту</a>
+            <hr>
+        {{else if eq $var "teacher"}}
+            <p>Название теста: {{.Name}}</p>
+            <a href="/test/get?id={{.Id}}">Перейти к прохождению теста</a>
+            <br>
+            <a href="/test/update?id={{.Id}}">Перейти к редактированию теста</a>
+            <br>
+            <a href="/test/delete?id={{.Id}}">Удалить тест</a>
+            <hr>
+        {{end}}
+    {{end}}
+</main>
 {{end}}
+
+{{define "css"}}
+<link href="../static/css/list-typeless.css" rel="stylesheet" type="text/css">
 {{end}}

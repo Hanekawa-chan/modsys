@@ -34,7 +34,7 @@ func (h *ResultHandler) resultGet(w http.ResponseWriter, r *http.Request) {
 		resultsView := make([]view.ResultView, len(results))
 		for i := range results {
 			resultsView[i].Id = results[i].Id
-			test, err := h.GetTestByID(results[i].TestId)
+			test, err := h.GetTestById(results[i].TestId)
 			if err != nil {
 				ReturnError(w, r, err)
 				return
@@ -49,7 +49,8 @@ func (h *ResultHandler) resultGet(w http.ResponseWriter, r *http.Request) {
 			resultsView[i].Author = teacher.Name + " " + teacher.Surname
 			resultsView[i].Score = results[i].Score
 		}
-		data := map[string]interface{}{"title": "Результаты", "results": resultsView}
+		data := map[string]interface{}{"title": "Результаты", "auth": true,
+			"results": resultsView, "role": h.GetRole(r)}
 		returnTemplateWithData(w, r, "results", data)
 	} else {
 		resultId, err := uuid.Parse(q)
@@ -65,7 +66,7 @@ func (h *ResultHandler) resultGet(w http.ResponseWriter, r *http.Request) {
 			answers[i].Question = h.GetQuestionById(answers[i].QuestionId)
 		}
 		fmt.Println(result)
-		test, err := h.GetTestByID(result.TestId)
+		test, err := h.GetTestById(result.TestId)
 		if err != nil {
 			ReturnError(w, r, err)
 			return
@@ -77,8 +78,10 @@ func (h *ResultHandler) resultGet(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		log.Info().Msg(strconv.Itoa(len(answers)))
-		resultFull := view.ResultFull{Name: test.Name, Author: teacher.Name + " " + test.Teacher.Surname, Score: result.Score, Answers: answers}
-		data := map[string]interface{}{"title": "Результаты Теста", "result": resultFull}
+		resultFull := view.ResultFull{Name: test.Name, Author: teacher.Name + " " +
+			test.Teacher.Surname, Score: result.Score, Answers: answers}
+		data := map[string]interface{}{"title": "Результаты Теста", "auth": true,
+			"result": resultFull, "role": h.GetRole(r)}
 		returnTemplateWithData(w, r, "result", data)
 	}
 }

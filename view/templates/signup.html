@@ -1,19 +1,29 @@
 {{define "content"}}
-<h2>Регистрация</h2>
-<form method="POST">
-    <label>Фамилия:<br />
-        <input type="text" name="surname">
-    </label><br />
-    <label>Имя:<br />
-        <input type="text" name="name">
-    </label><br />
-    <label>Email:<br />
-        <input type="email" name="email">
-    </label><br />
-    <label>Пароль:<br />
-        <input type="password" name="password">
-    </label><br />
-    <input type="submit">
-</form>
-<a href="http://localhost:8080/login">Вход в аккаунт</a>
+<main class="form-signup w-100 m-auto">
+    <h2 class="h2 mb-3 fw-normal">Регистрация</h2>
+    <form method="POST">
+        <div class="form-floating">
+            <input class="form-control" type="text" name="surname" id="surname">
+            <label for="surname">Фамилия</label>
+        </div>
+        <div class="form-floating">
+            <input class="form-control" type="text" name="name" id="name">
+            <label for="name">Имя</label>
+        </div>
+        <div class="form-floating">
+            <input class="form-control" type="email" name="email" id="email">
+            <label for="email">Email</label>
+        </div>
+        <div class="form-floating">
+            <input class="form-control" type="password" name="password" id="password">
+            <label for="password">Пароль</label>
+        </div>
+        <input class="w-100 btn btn-lg btn-primary" type="submit">
+    </form>
+    <a class="mb-3 fw-normal" href="http://localhost:8080/login">Вход в аккаунт</a>
+</main>
+{{end}}
+
+{{define "css"}}
+<link href="../static/css/signup.css" rel="stylesheet" type="text/css">
 {{end}}

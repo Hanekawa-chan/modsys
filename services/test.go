@@ -10,10 +10,20 @@ func (h *Handler) GetTests() []models.Test {
 	return tests
 }
 
-func (h *Handler) GetTestByID(id uuid.UUID) (*models.Test, error) {
+func (h *Handler) GetTestsByTeacherId(id uuid.UUID) []models.Test {
+	tests := h.db.GetTestsByTeacherId(id)
+	return tests
+}
+
+func (h *Handler) DeleteTestById(id uuid.UUID) error {
+	err := h.db.DeleteTestById(id)
+	return err
+}
+
+func (h *Handler) GetTestById(id uuid.UUID) (*models.Test, error) {
 	var test *models.Test
 	var err error
-	test, err = h.db.GetTestByID(id)
+	test, err = h.db.GetTestById(id)
 	if err != nil {
 		return nil, err
 	}

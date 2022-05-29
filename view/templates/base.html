@@ -2,9 +2,94 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{.title}}</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    {{template "css"}}
+    <link href="../static/css/base.css" rel="stylesheet" type="text/css">
+    <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
 </head>
-<body>
+<body class="text-center">
+<header>
+    <div class="px-3 py-2 bg-dark text-white">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                    <li>
+                        <a href="/" class="nav-link text-white">
+                            Главная страница
+                        </a>
+                    </li>
+                    {{if or (eq .role "student") (eq .role "teacher")}}
+                    <li>
+                        <a href="/result/get?id=all" class="nav-link text-white">
+                            Результаты
+                        </a>
+                    </li>
+                    {{end}}
+                    {{if eq .role "student"}}
+                    <li>
+                        <a href="/test/get?id=all" class="nav-link text-white">
+                            Тесты
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/teacher/get?id=all" class="nav-link text-white">
+                            Преподаватели
+                        </a>
+                    </li>
+                    {{end}}
+                    {{if eq .role "teacher"}}
+                    <li>
+                        <a href="/test/get?id=my" class="nav-link text-white">
+                            Тесты
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/list/get?id=my" class="nav-link text-white">
+                            Студенты
+                        </a>
+                    </li>
+                    {{end}}
+                    {{if eq .role "admin"}}
+                    <li>
+                        <a href="/list" class="nav-link text-white">
+                            Список пользователей
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/record" class="nav-link text-white">
+                            Создание статьи
+                        </a>
+                    </li>
+                    {{end}}
+                    {{if .auth}}
+                    <li>
+                        <a href="/logout" class="nav-link text-white">
+                            Выход из аккаунта
+                        </a>
+                    </li>
+                    {{else}}
+                    <li>
+                        <a href="/login" class="nav-link text-white">
+                            Войти
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/signup" class="nav-link text-white">
+                            Зарегистрироваться
+                        </a>
+                    </li>
+                    {{end}}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</header>
 {{template "content" .}}
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 </body>
 </html>

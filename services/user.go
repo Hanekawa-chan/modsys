@@ -9,6 +9,10 @@ import (
 	"net/http"
 )
 
+func (h *Handler) GetUsers() []models.User {
+	return h.db.GetUsers()
+}
+
 func (h *Handler) GetUserByCredentials(credentials view.LoginCredentials) (*models.User, error) {
 	var user *models.User
 	var err error
@@ -75,7 +79,20 @@ func (h *Handler) GetAuthenticatedUserID(r *http.Request) (uuid.UUID, error) {
 	if err != nil {
 		return uuid.UUID{}, err
 	}
-	return user.GetID(), err
+	return user.Id, err
+}
+
+func (h *Handler) GetRole(r *http.Request) string {
+	id, err := h.GetAuthenticatedUserID(r)
+	if err != nil {
+		return ""
+	}
+	user, err := h.GetUserByID(id)
+	if err != nil {
+		return ""
+	}
+	role := user.Role.Role
+	return role
 }
 
 func HashPassword(password string) (string, error) {
