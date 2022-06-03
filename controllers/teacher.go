@@ -93,3 +93,35 @@ func (t *TestHandler) teacherDelete(w http.ResponseWriter, r *http.Request) {
 	}
 	http.Redirect(w, r, "http://localhost:8080/teacher/get", http.StatusFound)
 }
+
+func (t *TestHandler) teacherTest(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query().Get("id")
+	teacherId, err := uuid.Parse(q)
+	if err != nil {
+		ReturnError(w, r, err)
+		return
+	}
+	teacher, err := t.GetUserByID(teacherId)
+	if err != nil {
+		ReturnError(w, r, err)
+		return
+	}
+	tests := t.GetTestsByTeacherId(teacherId)
+	data := map[string]interface{}{"title": "Тесты", "auth": true, "author": teacher.Name + "а " + teacher.Surname + "а", "tests": tests, "role": t.GetRole(r)}
+	returnTemplateWithData(w, r, "teacher_tests", data)
+}
+
+func (t *TestHandler) studentsGet(w http.ResponseWriter, r *http.Request) {
+	teacherId, err := t.GetAuthenticatedUserID(r)
+	if err != nil {
+		ReturnError(w, r, err)
+		return
+	}
+	students, err := t.GetStudentsByTeacherId(teacherId)
+	if err != nil {
+		ReturnError(w, r, err)
+		return
+	}
+	data := map[string]interface{}{"title": "Студенты", "students": students, "auth": true, "role": t.GetRole(r)}
+	returnTemplateWithData(w, r, "students", data)
+}

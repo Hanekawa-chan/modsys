@@ -1,0 +1,14 @@
+{{define "content"}}
+    <h2>Список студентов</h2>
+    {{range .students}}
+        <p>Email: {{.Email}}</p>
+        <p>Имя: {{.Name}}</p>
+        <p>Фамилия: {{.Surname}}</p>
+        <hr>
+    {{end}}
+
+{{end}}
+
+{{define "css"}}
+<!--<link href="../static/css/signin.css" rel="stylesheet" type="text/css">-->
+{{end}}

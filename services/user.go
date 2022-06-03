@@ -21,6 +21,10 @@ func (h *Handler) GetTeachersByStudentId(studentId uuid.UUID) ([]models.User, er
 	return h.db.GetTeachersByStudentId(studentId)
 }
 
+func (h *Handler) GetStudentsByTeacherId(teacherId uuid.UUID) ([]models.User, error) {
+	return h.db.GetStudentsByTeacherId(teacherId)
+}
+
 func (h *Handler) GetUserByCredentials(credentials view.LoginCredentials) (*models.User, error) {
 	var user *models.User
 	var err error

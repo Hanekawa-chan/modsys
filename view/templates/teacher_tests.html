@@ -1,0 +1,14 @@
+{{define "content"}}
+<h2>Список тестов {{.author}}</h2>
+<main class="list-typeless w-100 m-auto">
+    {{range .tests}}
+        <p>Название теста: {{.Name}}</p>
+        <a href="/test/get?id={{.Id}}">Перейти к тесту</a>
+        <hr>
+    {{end}}
+</main>
+{{end}}
+
+{{define "css"}}
+<link href="../static/css/list-typeless.css" rel="stylesheet" type="text/css">
+{{end}}

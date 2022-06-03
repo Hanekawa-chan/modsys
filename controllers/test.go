@@ -52,6 +52,11 @@ func (t *TestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		t.teacherDelete(w, r)
 	case "/teacher/get":
 		t.teacherGet(w, r)
+	case "/teacher/test":
+		t.teacherTest(w, r)
+	case "/teacher/students":
+		t.studentsGet(w, r)
+
 	}
 }
 

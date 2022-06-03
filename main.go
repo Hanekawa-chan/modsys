@@ -28,10 +28,10 @@ func main() {
 	defaultRoutes := []string{"/", "/login", "/signup", "/logout", "/static", "/error"}
 
 	roleRoutes[services.Student] = append(defaultRoutes, []string{"/test/get", "/result/get", "/teacher/add",
-		"/teacher/list", "/teacher/get", "/teacher/delete"}...)
+		"/teacher/list", "/teacher/get", "/teacher/delete", "/teacher/test"}...)
 
 	roleRoutes[services.Teacher] = append(defaultRoutes, []string{"/test/create", "/test/update", "/test/delete",
-		"/test/get", "/result/get"}...)
+		"/test/get", "/result/get", "/teacher/students"}...)
 
 	roleRoutes[services.Admin] = append(defaultRoutes, []string{"/set", "/list", "/record"}...)
 
@@ -63,6 +63,8 @@ func main() {
 	teacherRouter.Handle("/list", &testHandler)
 	teacherRouter.Handle("/get", &testHandler)
 	teacherRouter.Handle("/delete", &testHandler)
+	teacherRouter.Handle("/test", &testHandler)
+	teacherRouter.Handle("/students", &testHandler)
 
 	testRouter := handler.PathPrefix("/test").Subrouter()
 	testRouter.Handle("/get", &testHandler)

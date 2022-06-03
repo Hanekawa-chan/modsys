@@ -46,6 +46,17 @@ func (d *DB) GetTeachersByStudentId(studentId uuid.UUID) ([]models.User, error) 
 	return teachers, err
 }
 
+func (d *DB) GetStudentsByTeacherId(id uuid.UUID) ([]models.User, error) {
+	var students []models.User
+	var teacher models.User
+	err := d.First(&teacher, id).Error
+	if err != nil {
+		return students, err
+	}
+	err = d.Debug().Raw("SELECT * FROM users u JOIN students_teachers s_t ON s_t.teacher_id = $1 WHERE s_t.user_id = u.id", teacher.Id).Scan(&students).Error
+	return students, err
+}
+
 func (d *DB) SaveUser(user *models.User) error {
 	tx := d.Create(user)
 	return tx.Error
